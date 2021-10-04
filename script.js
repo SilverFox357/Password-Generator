@@ -1,17 +1,140 @@
-// Assignment code here
-
-
-// Get references to the #generate element
+// Assignment Code
 var generateBtn = document.querySelector("#generate");
+
+//Define variables for Modal form
+let pwdLen = 0;
+let upBool = false;
+let lwBool = false;
+let spBool = false;
+let nmBool = false;
+
+//Define variables to determine if character selection is used
+let upUsed = false;
+let lwUsed = false;
+let spUsed = false;
+let nmUsed = false;
+
+// Function to generate random password based on use input
+function generatePassword() {
+
+  // Variables to hold strings of charaters to use in password
+  let strUpCase = "ABCDEFGHIJKLMNOPQURSTUVWXYZ";
+  let strLowCase = "abcdefghijklmnopqrstuvwxyz";
+  let strNumbers = "0123456789";
+  let strSpecial = "`~!@#$%^&*()_+-=?/<>";
+
+  let passwd = "";
+  let rndNum = 0;
+  let i = 0;
+  console.log(pwdLen);
+  while (i < pwdLen)  {
+
+    rndNum = Math.floor((Math.random() * 4));
+    switch(rndNum) {
+      case 0:
+        console.log("upper" + upBool);
+        if (upBool) {
+          //add character from random postion in Upper string
+          passwd = passwd + strUpCase.charAt(Math.floor((Math.random() * 26)));
+          upUsed = true;
+          i++;
+          }
+        break;
+      case 1:
+        console.log("lower" + lwBool);
+        if (lwBool) {
+            //add character from random postion in Lower string
+            passwd = passwd + strLowCase.charAt(Math.floor((Math.random() * 26)));      
+            lwUsed = true;
+            i++;
+          }
+      case 2:
+        console.log("special" + spBool);
+        if (spBool) {
+            //add character from random postion in Special string
+            passwd = passwd + strSpecial.charAt(Math.floor((Math.random() * 20)));
+            spUsed = true;
+            i++;
+          }
+      case 3:
+        console.log("number" + nmBool);
+        if (nmBool) {
+            //add character from random postion in Number string
+            passwd = passwd + strNumbers.charAt(Math.floor((Math.random() * 10)));
+            nmUsed = true;
+            i++;
+          }
+    }
+  
+  }
+
+  // Verify if the proper character types are used
+  if ((nmBool == nmUsed) && (spBool == spUsed) && (upBool == upUsed) && (lwBool == lwUsed)) {
+    return passwd;
+  } else { // reset and rerun generation
+    console.log(passwd + "error");
+    upUsed = false; lwUsed = false; spUsed = false; nmUsed = false;
+    let errPassword = generatePassword();
+    return errPassword;
+  }
+  
+}
 
 // Write password to the #password input
 function writePassword() {
-  var password = generatePassword();
-  var passwordText = document.querySelector("#password");
+  let password = generatePassword();
+  let passwordText = document.querySelector("#password");
 
   passwordText.value = password;
 
 }
 
 // Add event listener to generate button
-generateBtn.addEventListener("click", writePassword);
+// Removed this to use the Modal form
+// generateBtn.addEventListener("click", writePassword);
+
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("generate");
+
+// Get the <span> element that closes the modal
+var sbmt = document.getElementsByClassName("submit")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+sbmt.onclick = function() {
+
+  //Get values from input boxes
+  pwdLen = document.getElementById("pwdlen").value;
+  upBool = document.getElementById("upper").checked;
+  lwBool = document.getElementById("lower").checked;
+  spBool = document.getElementById("special").checked;
+  nmBool = document.getElementById("numbers").checked;
+
+  //Check the request length and that at least one character option is selected
+  if ((pwdLen >= 8) && (pwdLen <= 128) && (upBool || lwBool || spBool || nmBool)) {
+    modal.style.display = "none";
+    writePassword();
+  } else {
+    if ((pwdLen < 8) || (pwdLen > 128)) {
+      alert("Length needs to be between 8 and 128!")
+    } else {
+      alert("Al least one character option needs to be checked!")
+    }
+  }
+
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
